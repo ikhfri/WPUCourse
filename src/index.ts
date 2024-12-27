@@ -13,7 +13,7 @@ async function init() {
     
     app.use(bodyParser.json());
 
-    app.use("/", router);
+    app.use("/api", router);
 
     app.listen(PORT, () => {
       console.log(`Example app listening on port http://localhost:${PORT}`);
