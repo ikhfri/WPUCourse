@@ -11,10 +11,15 @@ async function init() {
     const app = express();
 
     
+    
     app.use(bodyParser.json());
 
     app.use("/api", router);
 
+    app.get("/", (req, res) => {
+      res.status(200).json({ message: "Server is running", data : null });
+    });
+    
     app.listen(PORT, () => {
       console.log(`Example app listening on port http://localhost:${PORT}`);
     });
