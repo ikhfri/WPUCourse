@@ -2,11 +2,14 @@ import express from "express";
 import router from "./routes/api";
 import bodyParser from "body-parser";
 import db from "./utils/database";
+import dotenv from "dotenv";
 
-// Inisialisasi Express
+
 const app = express();
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config();
+}
 
-// Middleware
 app.use(bodyParser.json());
 app.use("/api", router);
 
@@ -14,7 +17,6 @@ app.get("/", (req, res) => {
   res.status(200).json({ message: "Server is running", data: null });
 });
 
-// Koneksi database
 (async () => {
   try {
     const result = await db();
@@ -24,5 +26,4 @@ app.get("/", (req, res) => {
   }
 })();
 
-// Ekspor untuk Vercel
 export default app;

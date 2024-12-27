@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import { DATABASE_URL } from "./env";
 
-// Variabel global untuk status koneksi
 let isDbConnected = false;
 
 const connect = async () => {
@@ -13,10 +12,10 @@ const connect = async () => {
   try {
     await mongoose.connect(DATABASE_URL, {
       dbName: "wpucourse",
-      serverSelectionTimeoutMS: 59000, // Timeout 5 detik jika tidak ada koneksi
+      serverSelectionTimeoutMS: 59000,
     });
 
-    isDbConnected = true; // Tandai bahwa sudah terkoneksi
+    isDbConnected = true; 
     console.log("Database connected successfully");
     return Promise.resolve("Database connected");
   } catch (error) {
