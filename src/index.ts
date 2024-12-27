@@ -7,12 +7,11 @@ async function init() {
   try {
     const result = await db()
     console.log("database status :", result);
-
+    const PORT = 5000;
     const app = express();
+
     
     app.use(bodyParser.json());
-
-    const PORT = 5000;
 
     app.use("/", router);
 

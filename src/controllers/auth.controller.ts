@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import * as Yup from "yup";
 import UserModel from "../models/user.model";
+import { encrypt } from "../utils/encryption";
+import { generateToken } from "../utils/jwt";
+import { IReqUser } from "../middlewares/auth.middleware";
 
 type TRegister = {
   fullName: string;
@@ -9,6 +12,11 @@ type TRegister = {
   password: string;
   confirmPassword: string;
 };
+
+type TLogin = {
+  identifier : string,
+  password : string
+}
 
 const registerValidateSchema = Yup.object({
   fullName: Yup.string().required(),
@@ -30,6 +38,15 @@ export default {
           email,
           password,
           confirmPassword
+        })
+        
+        const exitingUser = await UserModel.findOne({
+          email
+        })
+
+        if(exitingUser) return res.status(400).json({
+          message: "User already exist",
+          data: null
         })
 
         const result = await UserModel.create({
@@ -53,5 +70,74 @@ export default {
       })
     }
   },
+
+  async login (req: Request, res: Response) {
+
+    const {identifier, password} = req.body as unknown as TLogin
+
+    try {
+      const userByIdentifier = await UserModel.findOne({
+        $or : [
+          {email : identifier},
+          {username : identifier}
+        ]
+      })
+
+      if(!userByIdentifier) return res.status(403).json({
+        message : "User not found",
+        data : null
+      })
+
+
+      const validatePassword: boolean = encrypt(password) === userByIdentifier.password
+
+      if(!validatePassword) return res.status(403).json({
+        message : "user not found",
+        data : null
+      })
+
+
+      const token = generateToken({
+        id: userByIdentifier._id,
+        role:userByIdentifier.role,
+        activationCode: userByIdentifier.activationCode
+      })
+
+      res.status(200).json({
+        message : "login succes",
+        data : token
+      })
+      
+    } catch (error) {
+      const err = error as unknown as Error
+      return res.status(400).json({
+        message : err.message,
+        data : null
+      });
+    }
+  },
+
+
+
+async me (req: IReqUser, res: Response) {
+  try {
+    
+    const user = req.user;
+    const result = await UserModel.findById(user?.id)
+
+    res.status(200).json({
+      message : "success get user profile",
+      data : result
+    })
+
+  } catch (error) {
+      const err = error as unknown as Error;
+      return res.status(400).json({
+        message: err.message,
+        data: null,
+      });
+  }
+}
+
 };
 
