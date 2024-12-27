@@ -13,7 +13,7 @@ const connect = async () => {
   try {
     await mongoose.connect(DATABASE_URL, {
       dbName: "wpucourse",
-      serverSelectionTimeoutMS: 5000, // Timeout 5 detik jika tidak ada koneksi
+      serverSelectionTimeoutMS: 59000, // Timeout 5 detik jika tidak ada koneksi
     });
 
     isDbConnected = true; // Tandai bahwa sudah terkoneksi
