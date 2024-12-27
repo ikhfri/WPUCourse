@@ -1,32 +1,28 @@
-  import express from "express";
-  import router from "./routes/api";
-  import bodyParser from "body-parser";
-  import db from "./utils/database";
+import express from "express";
+import router from "./routes/api";
+import bodyParser from "body-parser";
+import db from "./utils/database";
 
-  async function init() {
-    try {
-      const result = await db()
-      console.log("database status :", result);
-      const PORT = 5000;
-      const app = express();
-      app.use(bodyParser.json());
-      app.get("/", (req, res) => {
-        res.status(200).json({ message: "Server is running", data : null });
-      });
+// Inisialisasi Express
+const app = express();
 
-      app.use("/api", router);
+// Middleware
+app.use(bodyParser.json());
+app.use("/api", router);
 
-      
-      app.listen(PORT, () => {
-        console.log(`Example app listening on port http://localhost:${PORT}`);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-    
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "Server is running", data: null });
+});
+
+// Koneksi database
+(async () => {
+  try {
+    const result = await db();
+    console.log("Database status:", result);
+  } catch (error) {
+    console.error("Database connection error:", error);
   }
+})();
 
-
-  init();
-
-module.exports = init
+// Ekspor untuk Vercel
+export default app;
