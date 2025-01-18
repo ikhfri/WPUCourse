@@ -18,7 +18,7 @@ const connect = async () => {
     isDbConnected = true; 
     console.log("Database connected successfully");
     return Promise.resolve("Database connected");
-  } catch (error) {
+  } catch (error : any) {
     console.error("Database connection error:", error.message);
     return Promise.reject(error);
   }
